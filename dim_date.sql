@@ -1,3 +1,4 @@
+-- Creation of empty output table
 CREATE TABLE IF NOT EXISTS "dim_date" (
 	"date_dwid" TEXT, 
 	"date_code" TEXT,
@@ -29,10 +30,11 @@ CREATE TABLE IF NOT EXISTS "dim_date" (
 	"is_weekend" TEXT
 );
 
+-- Variables
 SET START_DATE  = '2000-01-01';
-
 SET NUMBER_DAYS= (SELECT TRUNC(40 * 365.25));
 
+-- Creation of calendar
 CREATE OR REPLACE TABLE "prep_date" AS (
 	WITH "date_range" AS (
 	SELECT DATEADD(DAY,(row_number() OVER (ORDER BY seq4()) -1), $START_DATE) AS "start_date", 
@@ -70,6 +72,7 @@ SELECT TO_CHAR("date_dwid") AS "date_dwid",
 FROM "date_range" dr
 );
 
+-- Insertion of data into the output table
 INSERT OVERWRITE INTO "dim_date" (
 	"date_dwid", 
 	"date_code",
